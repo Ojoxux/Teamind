@@ -18,7 +18,7 @@ import {
   useColorModeValue,
   type BoxProps,
 } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FiFilter, FiX } from 'react-icons/fi';
 import { Heading } from '@/components/atoms/Heading';
 import { Text } from '@/components/atoms/Text';
@@ -73,7 +73,13 @@ export const FilterPanel = ({
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   // フィルターの変更を親コンポーネントに通知
+  // 無限ループを防ぐために、初回レンダリング時は通知しない
+  const firstRender = useRef(true);
   useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
     onFilterChange?.(filters);
   }, [filters, onFilterChange]);
 
