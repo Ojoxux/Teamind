@@ -58,6 +58,7 @@ export const SearchBar = ({
         value={query}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        pl="12"
         pr="2.5rem"
       />
       {query && (
