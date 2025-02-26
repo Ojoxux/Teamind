@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Grid,
@@ -60,16 +60,36 @@ export const SearchLayout = ({
   onFilterChange,
   onPageChange,
 }: SearchLayoutProps) => {
+  // initialFiltersが変更されたときだけ内部状態を更新するために、useRefを使用
+  const prevInitialFiltersRef = useRef(initialFilters);
   const [filters, setFilters] = useState<FilterState | undefined>(
     initialFilters
   );
+
+  // initialFiltersが変更されたときだけ内部状態を更新
+  useEffect(() => {
+    if (
+      JSON.stringify(prevInitialFiltersRef.current) !==
+      JSON.stringify(initialFilters)
+    ) {
+      setFilters(initialFilters);
+      prevInitialFiltersRef.current = initialFilters;
+    }
+  }, [initialFilters]);
+
   const isMobile = useBreakpointValue({ base: true, md: false });
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // フィルターの変更を親コンポーネントに通知
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);
-    onFilterChange?.(newFilters);
+    // 親コンポーネントに通知するが、内部状態の更新は行わない
+    if (onFilterChange) {
+      // setTimeout を使って非同期にすることで、レンダリングサイクルを分離
+      setTimeout(() => {
+        onFilterChange(newFilters);
+      }, 0);
+    }
   };
 
   // 検索クエリの変更を親コンポーネントに通知
