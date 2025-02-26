@@ -1,33 +1,31 @@
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
-import { Providers } from './providers';
+'use client';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
-
-export const metadata: Metadata = {
-  title: 'Teamind - Teams会議の学習支援ツール',
-  description:
-    'Teams会議の録画内容をAIで解析し、効率的な学習・復習を支援するアプリケーション',
-};
+import { ChakraProvider, Box } from '@chakra-ui/react';
+import { theme } from '@/theme';
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="ja">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Providers>{children}</Providers>
+      <head>
+        <title>動画文字起こし・要約アプリ</title>
+        <meta
+          name="description"
+          content="動画の文字起こしと要約を自動生成するアプリケーション"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
+        <ChakraProvider theme={theme}>
+          <Box minH="100vh">{children}</Box>
+        </ChakraProvider>
       </body>
     </html>
   );
