@@ -88,7 +88,12 @@ export const Sidebar = ({ isCollapsed = false, ...props }: SidebarProps) => {
         <Divider />
 
         {/* ナビゲーションアイテム */}
-        <VStack spacing={1} align="start" w="100%" pt={4}>
+        <VStack
+          spacing={1}
+          align={isCollapsed ? "center" : "start"}
+          w="100%"
+          pt={4}
+        >
           {navItems.map((item) => (
             <NavItem
               key={item.href}
@@ -96,7 +101,9 @@ export const Sidebar = ({ isCollapsed = false, ...props }: SidebarProps) => {
               label={isCollapsed ? '' : item.label}
               href={item.href}
               isActive={pathname === item.href}
+              isFolded={isCollapsed}  // 追加
               justifyContent={isCollapsed ? 'center' : 'flex-start'}
+              w={isCollapsed ? 'auto' : '100%'}
               px={isCollapsed ? 2 : 4}
             />
           ))}
