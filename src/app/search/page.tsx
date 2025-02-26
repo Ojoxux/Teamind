@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SearchLayout } from '@/components/templates/SearchLayout';
+import { Box, Spinner } from '@chakra-ui/react';
 
 // FilterState型の定義
 type FilterState = {
@@ -72,7 +73,8 @@ const MOCK_KEYWORDS = [
   'レビュー',
 ];
 
-export default function SearchPage() {
+// 実際の検索ページコンポーネント
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -187,5 +189,20 @@ export default function SearchPage() {
       onFilterChange={handleFilterChange}
       onPageChange={handlePageChange}
     />
+  );
+}
+
+// メインのエクスポートコンポーネント
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <Box p={10} textAlign="center">
+          <Spinner size="xl" />
+        </Box>
+      }
+    >
+      <SearchPageContent />
+    </Suspense>
   );
 }
