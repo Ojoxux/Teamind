@@ -1,36 +1,165 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Teamind
 
-## Getting Started
+Teams 会議の録画内容を AI で解析し、効率的な学習・復習を支援するアプリケーション
 
-First, run the development server:
+## 概要
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Teamind は、Microsoft Teams などのオンライン会議ツールで録画された動画を自動的に解析し、以下の機能を提供します：
+
+- 動画の文字起こし（トランスクリプト）
+- 会議内容の要約
+- 重要なキーポイントの抽出
+- 関連キーワードの抽出
+- 理解度を確認するための質問生成
+- 動画内容に基づいた検索機能
+
+これにより、長時間の会議や講義の内容を効率的に復習し、重要なポイントを素早く把握することができます。
+
+## 主な機能
+
+### 動画検索
+
+- キーワードによる動画検索
+- カテゴリー、長さ、キーワードによるフィルタリング
+- 検索結果の一覧表示
+
+### 動画詳細表示
+
+- 動画再生
+- 文字起こし（トランスクリプト）表示
+- チャプター表示
+- 要約、キーポイント、キーワード、質問の表示
+- 関連動画の表示
+
+### ダッシュボード
+
+- 最近視聴した動画
+- 人気の動画
+- 統計情報
+
+## 技術スタック
+
+- **フロントエンド**: Next.js, TypeScript, Chakra UI
+- **バックエンド**: [未定]
+- **AI/ML**: [使用している AI/ML 技術を記載]
+- **インフラ**: [未定]
+
+## 開発環境のセットアップ
+
+### 前提条件
+
+- Node.js 18.x 以上
+- npm または yarn
+
+### インストール手順
+
+1. リポジトリをクローン
+
+   ```bash
+   git clone https://github.com/your-username/teamind.git
+   cd teamind
+   ```
+
+2. 依存関係のインストール
+
+   ```bash
+   npm install
+   # または
+   yarn install
+   ```
+
+3. 開発サーバーの起動
+
+   ```bash
+   npm run dev
+   # または
+   yarn dev
+   ```
+
+4. ブラウザで http://localhost:3000 にアクセス
+
+## 環境変数
+
+`.env.local`ファイルを作成し、以下の環境変数を設定してください：
+
+```
+NEXT_PUBLIC_API_URL=your_api_url
+# その他の必要な環境変数
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 開発ワークフロー
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### ブランチ戦略
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `main`: 本番環境用のリリースブランチ。直接コミットは禁止。
+- `feature/[機能名]`: 新機能の開発用ブランチ。`main`から分岐し、完了後`main`にマージ。
+- `fix/[バグ内容]`: バグ修正用ブランチ。`main`から分岐。
+- `chore/[タスク内容]`: ビルドプロセスやツール、依存関係の変更。
+- `test/[テスト内容]`: テストの追加・修正。
+- `refactor/[リファクタ内容]`: コードリファクタリング。
+- `style/[スタイル変更]`: コードスタイルの変更。
 
-## Learn More
+### ブランチ命名規則
 
-To learn more about Next.js, take a look at the following resources:
+- 小文字とハイフンを使用（例: `feat/#00_add-search-function`）
+- 機能やタスクを簡潔に表現する名前を使用
+- Issue と関連付ける場合は、Issue 番号を含める（例: `feature/#42_add-login-function`）
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### コミットメッセージのルール
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+feat: 変更内容の要約（50文字以内）
+```
 
-## Deploy on Vercel
+タイプ:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `feat`: 新機能
+- `fix`: バグ修正
+- `docs`: ドキュメントのみの変更
+- `style`: コードの意味に影響を与えない変更（空白、フォーマット、セミコロンの欠落など）
+- `refactor`: バグ修正や機能追加ではないコード変更
+- `test`: テストの追加・修正
+- `chore`: ビルドプロセスやツール、依存関係の変更
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+例:
+
+```
+feat: ユーザー認証機能の実装
+fix: ログイン画面のバリデーションエラーを修正
+docs: READMEにデプロイ手順を追加
+```
+
+### Issues 管理
+
+- 新機能、バグ修正、改善などはすべて Issue として登録
+- Issue には適切なラベルを付ける（`enhancement`, `bug`, `documentation`など）
+- Issue には担当者、期限、関連するマイルストーンを設定
+- 作業開始時に Issue を自分にアサインし、ブランチを作成
+
+### プルリクエスト（PR）のルール
+
+- PR のタイトルは変更内容を簡潔に表現
+- PR 説明には以下を含める:
+  - 変更内容の詳細
+  - 関連する Issue 番号（`Closes #123`の形式）
+  - テスト方法
+  - スクリーンショット（UI 変更がある場合）
+- コードレビュー後、承認されたらマージ
+
+## コーディング規約
+
+- Biome の設定に従う
+- コンポーネントはアトミックデザインの原則に基づいて構成
+- TypeScript の型定義を適切に行う
+
+## デプロイ
+
+[デプロイ方法の説明]
+
+## コントリビューション
+
+1. このリポジトリをクローン
+2. 機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'feat: Add some amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを作成
