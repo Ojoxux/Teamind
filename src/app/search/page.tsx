@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SearchLayout } from '@/components/templates/SearchLayout';
 import { Box, Spinner } from '@chakra-ui/react';
@@ -91,34 +91,32 @@ function SearchPageContent() {
     keywords: [],
   });
 
-  // 検索クエリが変更されたときの処理
+  // 初期ロード時に一度だけ実行
   useEffect(() => {
+    // 初期データのロード
     if (query) {
       setIsLoading(true);
 
-      // APIからデータを取得する代わりに、モックデータを使用
-      setTimeout(() => {
-        // クエリに基づいてフィルタリング（単純な部分一致）
-        const filtered = MOCK_VIDEOS.filter(
-          (video) =>
-            video.title.toLowerCase().includes(query.toLowerCase()) ||
-            video.channelName.toLowerCase().includes(query.toLowerCase())
-        );
+      // クエリに基づいてフィルタリング（単純な部分一致）
+      const filtered = MOCK_VIDEOS.filter(
+        (video) =>
+          video.title.toLowerCase().includes(query.toLowerCase()) ||
+          video.channelName.toLowerCase().includes(query.toLowerCase())
+      );
 
-        setVideos(filtered);
-        setFilteredVideos(filtered);
-        setIsLoading(false);
-      }, 500);
+      setVideos(filtered);
+      setFilteredVideos(filtered);
+      setIsLoading(false);
+    } else {
+      setVideos(MOCK_VIDEOS);
+      setFilteredVideos(MOCK_VIDEOS);
     }
   }, [query]);
 
   // フィルターが変更されたときの処理
-  const handleFilterChange = (newFilters: FilterState) => {
-    setIsLoading(true);
-    setFilters(newFilters);
-
-    // APIからデータを取得する代わりに、モックデータを使用
-    setTimeout(() => {
+  const handleFilterChange = useCallback(
+    (newFilters: FilterState) => {
+      // フィルタリング処理を即時実行
       // 簡易的なフィルタリング
       let filtered = [...videos];
 
@@ -145,34 +143,46 @@ function SearchPageContent() {
         );
       }
 
+      // 状態更新を一度にまとめる
       setFilteredVideos(filtered);
-      setIsLoading(false);
-    }, 300);
-  };
+      // filtersの更新は別のレンダリングサイクルで行う
+      setTimeout(() => {
+        setFilters(newFilters);
+      }, 0);
+    },
+    [videos]
+  );
 
   // 検索処理
-  const handleSearch = (newQuery: string) => {
-    if (!newQuery.trim()) return;
-
-    router.push(`/search?q=${encodeURIComponent(newQuery)}`);
-  };
+  const handleSearch = useCallback(
+    (newQuery: string) => {
+      if (!newQuery.trim()) return;
+      router.push(`/search?q=${encodeURIComponent(newQuery)}`);
+    },
+    [router]
+  );
 
   // ページ変更処理
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
     window.scrollTo(0, 0);
-  };
+  }, []);
 
   // 動画カードクリック時の処理
-  const handleVideoClick = (videoId: string) => {
-    router.push(`/video/${videoId}`);
-  };
+  const handleVideoClick = useCallback(
+    (videoId: string) => {
+      router.push(`/video/${videoId}`);
+    },
+    [router]
+  );
 
-  // 動画にクリックハンドラを追加
-  const videosWithClickHandler = filteredVideos.map((video) => ({
-    ...video,
-    onClick: () => handleVideoClick(video.id),
-  }));
+  // 動画にクリックハンドラを追加 - useMemoで最適化
+  const videosWithClickHandler = useMemo(() => {
+    return filteredVideos.map((video) => ({
+      ...video,
+      onClick: () => handleVideoClick(video.id),
+    }));
+  }, [filteredVideos, handleVideoClick]);
 
   return (
     <SearchLayout
