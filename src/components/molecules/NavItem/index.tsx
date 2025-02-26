@@ -10,6 +10,7 @@ export interface NavItemProps extends BoxProps {
   label: string;
   href: string;
   isActive?: boolean;
+  isFolded?: boolean;  // 追加
 }
 
 export const NavItem = ({
@@ -17,6 +18,7 @@ export const NavItem = ({
   label,
   href,
   isActive = false,
+  isFolded = false,  // 追加
   ...props
 }: NavItemProps) => {
   return (
@@ -29,16 +31,28 @@ export const NavItem = ({
       borderRadius="md"
       bg={isActive ? 'blue.50' : 'transparent'}
       color={isActive ? 'blue.600' : 'gray.700'}
+      textAlign="center"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
       _hover={{
         bg: isActive ? 'blue.50' : 'gray.100',
+        transform: 'scale(1.05)',
       }}
       transition="all 0.2s"
       {...props}
     >
-      <Flex align="center">
-        <Icon as={icon} fontSize="xl" mr={3} />
-        <Text fontWeight={isActive ? 'semibold' : 'medium'}>{label}</Text>
+      <Flex 
+        align="center" 
+        justify={isFolded ? "center" : "flex-start"} 
+        w="full"
+      >
+        <Icon as={icon} fontSize="xl" mr={isFolded ? 0 : 3} />
+        {!isFolded && (
+          <Text fontWeight={isActive ? 'semibold' : 'medium'}>{label}</Text>
+        )}
       </Flex>
     </Box>
+
   );
 };

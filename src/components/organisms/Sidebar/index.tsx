@@ -101,8 +101,9 @@ export const Sidebar = ({ isCollapsed = false, ...props }: SidebarProps) => {
               label={isCollapsed ? '' : item.label}
               href={item.href}
               isActive={pathname === item.href}
+              isFolded={isCollapsed}  // 追加
               justifyContent={isCollapsed ? 'center' : 'flex-start'}
-              w={isCollapsed ? 'autp' : '100%'}
+              w={isCollapsed ? 'auto' : '100%'}
               px={isCollapsed ? 2 : 4}
             />
           ))}
