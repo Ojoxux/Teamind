@@ -105,7 +105,7 @@ export const FilterPanel = ({
   const handleDurationChange = (values: number[]) => {
     setFilters((prev) => ({
       ...prev,
-      duration: [values[0], values[1]],
+      duration: [0, values[1]],
     }));
   };
 
@@ -259,7 +259,7 @@ export const FilterPanel = ({
                 <Box px={2} pt={4} pb={2}>
                   <RangeSlider
                     aria-label={['最小時間', '最大時間']}
-                    value={filters.duration}
+                    value={[0, filters.duration[1]]}
                     min={0}
                     max={maxDuration}
                     onChange={handleDurationChange}
@@ -273,7 +273,7 @@ export const FilterPanel = ({
                 </Box>
 
                 <Flex justify="space-between" px={2}>
-                  <Text fontSize="sm">{formatTime(filters.duration[0])}</Text>
+                  <Text fontSize="sm">{formatTime(0)}</Text>
                   <Text fontSize="sm">{formatTime(filters.duration[1])}</Text>
                 </Flex>
               </AccordionPanel>
