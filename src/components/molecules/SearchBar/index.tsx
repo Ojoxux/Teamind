@@ -32,9 +32,9 @@ export const SearchBar = ({
   };
 
   const handleClear = () => {
-    setQuery('');
-    onSearch?.('');
-    onChange?.('');
+    setQuery('');     // 検索欄をクリア
+    onSearch?.('');   // 空のクリエで検索 (元の表示に戻す)
+    onChange?.('');   // 変更を通知
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -44,8 +44,14 @@ export const SearchBar = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-    onChange?.(e.target.value);
+    const newValue = e.target.value;
+    setQuery(newValue);
+    onChange?.(newValue);
+    
+    // 入力が空になった時に元の表示に戻す
+    if (newValue === '') {
+      onSearch?.('');
+    }
   };
 
   return (
