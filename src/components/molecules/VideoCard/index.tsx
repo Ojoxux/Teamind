@@ -35,7 +35,7 @@ export const VideoCard = ({
   return (
     <Box
       as={Link}
-      href={`/videos/${id}`}
+      href={`/video/${id}`}
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
