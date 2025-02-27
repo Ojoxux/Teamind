@@ -108,6 +108,7 @@ function SearchPageContent() {
       setFilteredVideos(filtered);
       setIsLoading(false);
     } else {
+      // クエリが空の場合は全データを表示
       setVideos(MOCK_VIDEOS);
       setFilteredVideos(MOCK_VIDEOS);
     }
@@ -156,7 +157,14 @@ function SearchPageContent() {
   // 検索処理
   const handleSearch = useCallback(
     (newQuery: string) => {
-      if (!newQuery.trim()) return;
+      if (!newQuery.trim()){
+        // 検索欄が空の場合、クエリパラメータを削除してホームに戻る
+        router.push('/search');
+        // 全データを表示
+        setVideos(MOCK_VIDEOS);
+        setFilteredVideos(MOCK_VIDEOS);
+        return;
+      } 
       router.push(`/search?q=${encodeURIComponent(newQuery)}`);
     },
     [router]
@@ -195,7 +203,7 @@ function SearchPageContent() {
       totalResults={filteredVideos.length}
       currentPage={currentPage}
       totalPages={totalPages}
-      onSearch={handleSearch}
+      onSearch={handleSearch}  // 修正したhandleSearchを渡す
       onFilterChange={handleFilterChange}
       onPageChange={handlePageChange}
     />
