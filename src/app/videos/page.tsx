@@ -12,8 +12,7 @@ import {
 import { VideoGrid } from '@/components/organisms/VideoGrid';
 import { useVideos } from '@/hooks/useVideos';
 import { MainLayout } from '@/components/templates/MainLayout';
-import { useRouter } from 'next/navigation';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 
 function VideoList() {
   const { data, error } = useVideos();
@@ -31,23 +30,20 @@ function VideoList() {
 }
 
 export default function VideosPage() {
-  const router = useRouter();
-  const { user } = useSupabaseAuth();
+  const { user, isLoading } = useRequireAuth();
 
-  if (!user) {
+  // 認証チェック中はローディング表示
+  if (isLoading) {
     return (
-      <Box p={8}>
-        <Alert status="warning">
-          <AlertIcon />
-          この機能を利用するにはログインが必要です
-        </Alert>
-        <Center mt={4}>
-          <Button colorScheme="blue" onClick={() => router.push('/login')}>
-            ログインする
-          </Button>
-        </Center>
-      </Box>
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
     );
+  }
+
+  // 認証されていない場合は何も表示しない（リダイレクト処理中）
+  if (!user) {
+    return null;
   }
 
   return (
