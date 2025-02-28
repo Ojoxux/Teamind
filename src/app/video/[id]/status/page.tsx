@@ -16,8 +16,10 @@ import {
 } from '@chakra-ui/react';
 import { MainLayout } from '@/components/templates/MainLayout';
 import { fetchVideoStatus } from '@/lib/api/videos';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 
 export default function VideoStatusPage() {
+  const { user, isLoading: authLoading } = useRequireAuth();
   const params = useParams();
   const router = useRouter();
   const videoId = params.id as string;
@@ -82,6 +84,21 @@ export default function VideoStatusPage() {
     };
   }, [videoId, router]);
 
+  // 認証チェック中はローディング表示
+  if (authLoading) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
+    );
+  }
+
+  // 認証されていない場合は何も表示しない（リダイレクト処理中）
+  if (!user) {
+    return null;
+  }
+
+  // 動画ステータスのロード中
   if (loading) {
     return (
       <MainLayout>
