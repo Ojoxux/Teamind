@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Box,
@@ -32,7 +32,8 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import NextLink from 'next/link';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
-export default function AuthPage() {
+// LoginFormコンポーネントとして分離
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -351,5 +352,32 @@ export default function AuthPage() {
         </VStack>
       </Container>
     </Flex>
+  );
+}
+
+// メインのページコンポーネント
+export default function AuthPage() {
+  return (
+    <Suspense
+      fallback={
+        <Flex minH="100vh" align="center" justify="center" bg="gray.50">
+          <Container
+            maxW="md"
+            py={12}
+            px={6}
+            bg="white"
+            borderRadius="lg"
+            boxShadow="lg"
+          >
+            {/* ローディング表示 */}
+            <VStack spacing={4}>
+              <Heading size="lg">読み込み中...</Heading>
+            </VStack>
+          </Container>
+        </Flex>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }
