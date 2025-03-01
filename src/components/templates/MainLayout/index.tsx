@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useState, useCallback, memo, type ReactNode } from 'react';
 import { Box, Flex, useBreakpointValue } from '@chakra-ui/react';
 import { Sidebar } from '@/components/organisms/Sidebar';
 import { Header } from '@/components/organisms/Header';
@@ -11,7 +11,7 @@ export interface MainLayoutProps {
   onSearch?: (query: string) => void;
 }
 
-export const MainLayout = ({
+const MainLayoutComponent = ({
   children,
   showSearchBar = true,
   onSearch,
@@ -22,9 +22,9 @@ export const MainLayout = ({
   // モバイル表示ではサイドバーを自動的に折りたたむ
   const isCollapsed = isMobile || isSidebarCollapsed;
 
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
+  const toggleSidebar = useCallback(() => {
+    setIsSidebarCollapsed((prev) => !prev);
+  }, []);
 
   return (
     <Flex h="100vh" overflow="hidden">
@@ -55,3 +55,5 @@ export const MainLayout = ({
     </Flex>
   );
 };
+
+export const MainLayout = memo(MainLayoutComponent);
