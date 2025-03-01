@@ -54,7 +54,7 @@ export default function VideoStatusPage() {
 
         // 処理が完了したら動画ページに遷移
         if (statusData.status === 'completed') {
-          router.push(`/videos/${videoId}`);
+          router.push(`/video/${videoId}`);
         }
       } catch (err) {
         setError(
