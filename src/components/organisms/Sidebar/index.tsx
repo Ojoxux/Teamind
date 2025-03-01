@@ -12,30 +12,48 @@ import {
 import {
   FiHome,
   FiUpload,
-  FiBarChart2,
-  FiSettings,
+  FiVideo,
   FiSearch,
+  FiUser,
+  FiLogOut,
 } from 'react-icons/fi';
 import { NavItem } from '@/components/molecules/NavItem';
 import { Text } from '@/components/atoms/Text';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { memo, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
 export interface SidebarProps extends BoxProps {
   isCollapsed?: boolean;
 }
 
-export const Sidebar = ({ isCollapsed = false, ...props }: SidebarProps) => {
+const SidebarComponent = ({ isCollapsed = false, ...props }: SidebarProps) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const { signOut } = useSupabaseAuth();
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
+  const handleLogout = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
+      try {
+        await signOut();
+        router.push('/login');
+      } catch (error) {
+        console.error('ログアウトエラー:', error);
+      }
+    },
+    [signOut, router]
+  );
+
   const navItems = [
-    { label: 'ホーム', icon: FiHome, href: '/' },
+    { label: 'ダッシュボード', icon: FiHome, href: '/dashboard' },
+    { label: 'マイ動画', icon: FiVideo, href: '/videos' },
     { label: '検索', icon: FiSearch, href: '/search' },
     { label: 'アップロード', icon: FiUpload, href: '/upload' },
-    { label: 'ダッシュボード', icon: FiBarChart2, href: '/dashboard' },
-    { label: '設定', icon: FiSettings, href: '/settings' },
   ];
 
   return (
@@ -56,7 +74,7 @@ export const Sidebar = ({ isCollapsed = false, ...props }: SidebarProps) => {
       <VStack h="full" spacing={0} align="start">
         {/* ロゴ */}
         <Box p={4} w="full">
-          <Link href="/" passHref>
+          <Link href="/dashboard" passHref>
             <Flex align="center" h="40px">
               {isCollapsed ? (
                 <Image
@@ -104,7 +122,28 @@ export const Sidebar = ({ isCollapsed = false, ...props }: SidebarProps) => {
 
         <Box flex={1} />
 
-        {/* ユーザー情報（オプション） */}
+        {/* ユーザー関連メニュー */}
+        <VStack spacing={1} align="start" w="100%" mb={4}>
+          <NavItem
+            icon={FiUser}
+            label={isCollapsed ? '' : 'プロフィール'}
+            href="/profile"
+            isActive={pathname === '/profile'}
+            justifyContent={isCollapsed ? 'center' : 'flex-start'}
+            px={isCollapsed ? 2 : 4}
+          />
+          <NavItem
+            icon={FiLogOut}
+            label={isCollapsed ? '' : 'ログアウト'}
+            href="/login"
+            isActive={false}
+            justifyContent={isCollapsed ? 'center' : 'flex-start'}
+            px={isCollapsed ? 2 : 4}
+            onClick={handleLogout}
+          />
+        </VStack>
+
+        {/* ユーザー情報 */}
         <Box
           px={4}
           py={4}
@@ -145,3 +184,5 @@ export const Sidebar = ({ isCollapsed = false, ...props }: SidebarProps) => {
     </Box>
   );
 };
+
+export const Sidebar = memo(SidebarComponent);
