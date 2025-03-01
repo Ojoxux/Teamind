@@ -3,31 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast, Progress, Box } from '@chakra-ui/react';
-import { UploadLayout } from '@/components/templates/UploadLayout';
+import { UploadForm } from '@/components/organisms/UploadForm';
 import { uploadVideo, fetchVideoStatus } from '@/lib/api/videos';
-import { useRequireAuth } from '@/hooks/useRequireAuth';
-import { Spinner, Center } from '@chakra-ui/react';
 
 export default function UploadPage() {
-  const { user, isLoading: authLoading } = useRequireAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const router = useRouter();
   const toast = useToast();
-
-  // 認証チェック中はローディング表示
-  if (authLoading) {
-    return (
-      <Center h="100vh">
-        <Spinner size="xl" />
-      </Center>
-    );
-  }
-
-  // 認証されていない場合は何も表示しない（リダイレクト処理中）
-  if (!user) {
-    return null;
-  }
 
   const pollVideoStatus = async (videoId: string, toastId: number | string) => {
     try {
@@ -243,10 +226,12 @@ export default function UploadPage() {
   };
 
   return (
-    <UploadLayout
-      onFormSubmit={handleUpload}
-      isLoading={isLoading}
-      uploadProgress={uploadProgress}
-    />
+    <Box maxW="800px" mx="auto" py={8} px={4}>
+      <UploadForm
+        onFormSubmit={handleUpload}
+        isLoading={isLoading}
+        uploadProgress={uploadProgress}
+      />
+    </Box>
   );
 }

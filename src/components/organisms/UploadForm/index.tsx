@@ -21,17 +21,18 @@ import { Input } from '@/components/atoms/Input';
 export interface UploadFormProps extends BoxProps {
   onFormSubmit?: (formData: FormData) => Promise<void>;
   isLoading?: boolean;
+  uploadProgress?: number;
 }
 
 export const UploadForm = ({
   onFormSubmit,
   isLoading = false,
+  uploadProgress = 0,
   ...props
 }: UploadFormProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,8 +42,27 @@ export const UploadForm = ({
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const dropzoneBg = useColorModeValue('gray.50', 'gray.700');
 
+  // 動画の長さを取得する関数
+  const getVideoDuration = (file: File): Promise<number> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+
+      video.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(video.src);
+        resolve(video.duration);
+      };
+
+      video.onerror = () => {
+        reject(new Error('動画の長さを取得できませんでした'));
+      };
+
+      video.src = URL.createObjectURL(file);
+    });
+  };
+
   // ファイルの選択
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
 
@@ -58,17 +78,43 @@ export const UploadForm = ({
       return;
     }
 
-    setFile(selectedFile);
+    try {
+      // 動画の長さを取得
+      const duration = await getVideoDuration(selectedFile);
 
-    // ファイル名をタイトルに設定（タイトルが空の場合）
-    if (!title) {
-      const fileName = selectedFile.name.replace(/\.[^/.]+$/, ''); // 拡張子を除去
-      setTitle(fileName);
+      // 20秒以上の動画はアップロード不可
+      if (duration > 20) {
+        toast({
+          title: 'エラー',
+          description: '開発段階のため、20秒以内の動画のみアップロード可能です',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      setFile(selectedFile);
+
+      // ファイル名をタイトルに設定（タイトルが空の場合）
+      if (!title) {
+        const fileName = selectedFile.name.replace(/\.[^/.]+$/, ''); // 拡張子を除去
+        setTitle(fileName);
+      }
+    } catch (error) {
+      console.error('動画の検証エラー:', error);
+      toast({
+        title: 'エラー',
+        description: '動画ファイルの検証中にエラーが発生しました',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   // ファイルのドラッグ&ドロップ
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
 
     const droppedFile = e.dataTransfer.files[0];
@@ -86,12 +132,38 @@ export const UploadForm = ({
       return;
     }
 
-    setFile(droppedFile);
+    try {
+      // 動画の長さを取得
+      const duration = await getVideoDuration(droppedFile);
 
-    // ファイル名をタイトルに設定（タイトルが空の場合）
-    if (!title) {
-      const fileName = droppedFile.name.replace(/\.[^/.]+$/, ''); // 拡張子を除去
-      setTitle(fileName);
+      // 20秒以上の動画はアップロード不可
+      if (duration > 20) {
+        toast({
+          title: 'エラー',
+          description: '開発段階のため、20秒以内の動画のみアップロード可能です',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      setFile(droppedFile);
+
+      // ファイル名をタイトルに設定（タイトルが空の場合）
+      if (!title) {
+        const fileName = droppedFile.name.replace(/\.[^/.]+$/, ''); // 拡張子を除去
+        setTitle(fileName);
+      }
+    } catch (error) {
+      console.error('動画の検証エラー:', error);
+      toast({
+        title: 'エラー',
+        description: '動画ファイルの検証中にエラーが発生しました',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -138,57 +210,21 @@ export const UploadForm = ({
     }
 
     try {
-      // アップロードの進捗をシミュレート
-      const simulateProgress = () => {
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 5;
-          if (progress >= 100) {
-            clearInterval(interval);
-          }
-          setUploadProgress(progress);
-        }, 300);
-
-        return () => clearInterval(interval);
-      };
-
-      const clearProgress = simulateProgress();
-
       // 実際のアップロード処理
       if (onFormSubmit) {
         await onFormSubmit(formData);
       }
 
-      clearProgress();
-
-      toast({
-        title: 'アップロード完了',
-        description: '動画が正常にアップロードされました',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-
       // フォームをリセット
       setTitle('');
       setDescription('');
       setFile(null);
-      setUploadProgress(0);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     } catch (error) {
       console.error('アップロードエラー:', error);
-
-      toast({
-        title: 'エラー',
-        description: 'アップロード中にエラーが発生しました',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-
-      setUploadProgress(0);
+      // エラー処理は親コンポーネントで行うため、ここでは最小限に
     }
   };
 
@@ -275,7 +311,7 @@ export const UploadForm = ({
                   ファイルを選択
                 </Button>
                 <Text fontSize="xs" color="gray.500">
-                  最大ファイルサイズ: 1GB
+                  最大ファイルサイズ: 1GB / 最大長さ: 20秒（開発段階の制限）
                 </Text>
               </VStack>
             </Box>
@@ -311,12 +347,10 @@ export const UploadForm = ({
         </FormField>
 
         {/* アップロード進捗 */}
-        {uploadProgress > 0 && (
+        {isLoading && uploadProgress > 0 && (
           <Box>
-            <Text fontSize="sm" mb={1}>
-              アップロード中... {uploadProgress}%
-            </Text>
-            <Progress value={uploadProgress} size="sm" colorScheme="blue" />
+            <Text mb={2}>アップロード中... {uploadProgress}%</Text>
+            <Progress value={uploadProgress} size="md" colorScheme="blue" />
           </Box>
         )}
 
@@ -326,8 +360,8 @@ export const UploadForm = ({
           colorScheme="blue"
           size="lg"
           isLoading={isLoading}
-          loadingText="アップロード中..."
-          isDisabled={!file || isLoading}
+          loadingText="アップロード中"
+          isDisabled={isLoading}
         >
           アップロード
         </Button>

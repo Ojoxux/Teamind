@@ -16,6 +16,7 @@ import {
 import { FiMenu, FiBell, FiChevronDown } from 'react-icons/fi';
 import { SearchBar } from '@/components/molecules/SearchBar';
 import { Text } from '@/components/atoms/Text';
+import { memo } from 'react';
 
 export interface HeaderProps extends BoxProps {
   onMenuClick?: () => void;
@@ -25,7 +26,7 @@ export interface HeaderProps extends BoxProps {
   userAvatarUrl?: string;
 }
 
-export const Header = ({
+const HeaderComponent = ({
   onMenuClick,
   showSearchBar = true,
   onSearch,
@@ -98,3 +99,5 @@ export const Header = ({
     </Box>
   );
 };
+
+export const Header = memo(HeaderComponent);
