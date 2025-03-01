@@ -16,7 +16,6 @@ import {
   CardBody,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { MainLayout } from '@/components/templates/MainLayout';
 import { VideoGrid } from '@/components/organisms/VideoGrid';
 import { Heading } from '@/components/atoms/Heading';
 import { Text } from '@/components/atoms/Text';
@@ -50,76 +49,74 @@ export const DashboardLayout = ({
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   return (
-    <MainLayout>
-      <Box mb={8}>
-        <Heading size="lg" mb={6}>
-          ダッシュボード
-        </Heading>
+    <Box mb={8}>
+      <Heading size="lg" mb={6}>
+        ダッシュボード
+      </Heading>
 
-        {/* 統計カード */}
-        <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={6} mb={8}>
-          {stats.map((stat) => (
-            <Card
-              key={stat.label}
-              bg={cardBg}
-              borderColor={borderColor}
-              borderWidth="1px"
-            >
-              <CardBody>
-                <Stat>
-                  <StatLabel>{stat.label}</StatLabel>
-                  <StatNumber>{stat.value}</StatNumber>
-                  {(stat.helpText || stat.change !== undefined) && (
-                    <StatHelpText>
-                      {stat.change !== undefined && (
-                        <StatArrow
-                          type={stat.isIncreased ? 'increase' : 'decrease'}
-                        />
-                      )}
-                      {stat.helpText || `${stat.change}%`}
-                    </StatHelpText>
-                  )}
-                </Stat>
-              </CardBody>
-            </Card>
-          ))}
-        </SimpleGrid>
+      {/* 統計カード */}
+      <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={6} mb={8}>
+        {stats.map((stat) => (
+          <Card
+            key={stat.label}
+            bg={cardBg}
+            borderColor={borderColor}
+            borderWidth="1px"
+          >
+            <CardBody>
+              <Stat>
+                <StatLabel>{stat.label}</StatLabel>
+                <StatNumber>{stat.value}</StatNumber>
+                {(stat.helpText || stat.change !== undefined) && (
+                  <StatHelpText>
+                    {stat.change !== undefined && (
+                      <StatArrow
+                        type={stat.isIncreased ? 'increase' : 'decrease'}
+                      />
+                    )}
+                    {stat.helpText || `${stat.change}%`}
+                  </StatHelpText>
+                )}
+              </Stat>
+            </CardBody>
+          </Card>
+        ))}
+      </SimpleGrid>
 
-        {/* 最近の動画と人気の動画 */}
-        <Grid templateColumns={{ base: '1fr', lg: 'repeat(2, 1fr)' }} gap={8}>
-          <GridItem>
-            <Card
-              bg={cardBg}
-              borderColor={borderColor}
-              borderWidth="1px"
-              h="100%"
-            >
-              <CardHeader>
-                <Heading size="md">最近の動画</Heading>
-              </CardHeader>
-              <CardBody>
-                <VideoGrid videos={recentVideos} isLoading={isLoading} />
-              </CardBody>
-            </Card>
-          </GridItem>
+      {/* 最近の動画と人気の動画 */}
+      <Grid templateColumns={{ base: '1fr', lg: 'repeat(2, 1fr)' }} gap={8}>
+        <GridItem>
+          <Card
+            bg={cardBg}
+            borderColor={borderColor}
+            borderWidth="1px"
+            h="100%"
+          >
+            <CardHeader>
+              <Heading size="md">最近の動画</Heading>
+            </CardHeader>
+            <CardBody>
+              <VideoGrid videos={recentVideos} isLoading={isLoading} />
+            </CardBody>
+          </Card>
+        </GridItem>
 
-          <GridItem>
-            <Card
-              bg={cardBg}
-              borderColor={borderColor}
-              borderWidth="1px"
-              h="100%"
-            >
-              <CardHeader>
-                <Heading size="md">人気の動画</Heading>
-              </CardHeader>
-              <CardBody>
-                <VideoGrid videos={popularVideos} isLoading={isLoading} />
-              </CardBody>
-            </Card>
-          </GridItem>
-        </Grid>
-      </Box>
-    </MainLayout>
+        <GridItem>
+          <Card
+            bg={cardBg}
+            borderColor={borderColor}
+            borderWidth="1px"
+            h="100%"
+          >
+            <CardHeader>
+              <Heading size="md">人気の動画</Heading>
+            </CardHeader>
+            <CardBody>
+              <VideoGrid videos={popularVideos} isLoading={isLoading} />
+            </CardBody>
+          </Card>
+        </GridItem>
+      </Grid>
+    </Box>
   );
 };
