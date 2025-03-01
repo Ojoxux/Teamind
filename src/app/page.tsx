@@ -12,7 +12,7 @@ export default function Home() {
   useEffect(() => {
     if (!isLoading) {
       if (user) {
-        router.push('/videos');
+        router.push('/dashboard');
       } else {
         router.push('/login');
       }
