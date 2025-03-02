@@ -56,7 +56,7 @@ export default function VideoDetailPage() {
         // APIから取得したデータをVideoDetailLayoutに必要な形式に変換
         const detailData: VideoDetailData = {
           videoId: video.id,
-          videoUrl: video.file_url || '',
+          videoUrl: video.file_url || undefined,
           videoTitle: video.title || '無題',
           videoDescription: video.description || '',
           uploadDate: video.created_at
