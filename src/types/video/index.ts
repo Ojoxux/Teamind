@@ -59,7 +59,7 @@ export interface Question {
 // VideoDetailLayoutに必要なデータの型
 export interface VideoDetailData {
   videoId: string;
-  videoUrl: string;
+  videoUrl?: string;
   videoTitle: string;
   videoDescription?: string;
   uploadDate?: string;

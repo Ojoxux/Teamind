@@ -26,7 +26,7 @@ import {
 import { Text } from '@/components/atoms/Text';
 
 export interface VideoPlayerProps extends BoxProps {
-  src: string;
+  src?: string;
   title?: string;
   poster?: string;
   onVideoTimeUpdate?: (currentTime: number) => void;
@@ -178,7 +178,7 @@ export const VideoPlayer = ({
       <AspectRatio ratio={16 / 9}>
         <video
           ref={videoRef}
-          src={src}
+          src={src && src.trim() !== '' ? src : undefined}
           poster={poster}
           onClick={togglePlay}
           onKeyDown={(e) => {
@@ -192,7 +192,7 @@ export const VideoPlayer = ({
           onEnded={handleEnded}
           style={{ width: '100%', height: '100%' }}
         >
-          <track kind="captions" src="" label="字幕" />
+          {/* 字幕トラックが必要な場合は適切なsrc値を設定してください */}
         </video>
       </AspectRatio>
 
