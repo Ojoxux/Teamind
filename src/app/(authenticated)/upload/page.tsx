@@ -4,92 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast, Progress, Box } from '@chakra-ui/react';
 import { UploadForm } from '@/components/organisms/UploadForm';
-import { uploadVideo, fetchVideoStatus } from '@/lib/api/videos';
+import { uploadVideo } from '@/lib/api/videos';
 
 export default function UploadPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const router = useRouter();
   const toast = useToast();
-
-  const pollVideoStatus = async (videoId: string, toastId: number | string) => {
-    try {
-      console.log(`Polling status for video ID: ${videoId}`);
-      const statusData = await fetchVideoStatus(videoId);
-      console.log('Status response:', statusData);
-
-      if (statusData.status === 'completed') {
-        console.log('Video processing completed');
-        toast.update(toastId, {
-          title: '処理完了',
-          description: '動画の処理が完了しました',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-        router.push(`/videos/${videoId}`);
-        return;
-      }
-
-      if (statusData.status === 'failed') {
-        console.error('Video processing failed:', statusData.error);
-        toast.update(toastId, {
-          title: '処理失敗',
-          description: statusData.error || '動画の処理に失敗しました',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        return;
-      }
-
-      // uploaded状態の場合も処理中として扱う
-      if (
-        statusData.status === 'uploaded' ||
-        statusData.status === 'processing'
-      ) {
-        console.log(
-          `Video status: ${statusData.status}, Progress: ${statusData.progress}%`
-        );
-
-        // 進捗が0の場合は特別なメッセージを表示
-        const progressMessage =
-          statusData.progress === 0
-            ? '処理の準備中...'
-            : `${statusData.progress}%`;
-
-        toast.update(toastId, {
-          render: () => (
-            <Box bg="white" p={3} rounded="md" shadow="lg">
-              <Progress
-                value={statusData.progress}
-                size="sm"
-                colorScheme="blue"
-                rounded="md"
-                isAnimated
-              />
-              <Box mt={2} color="gray.600">
-                {statusData.status === 'uploaded'
-                  ? '処理開始待ち...'
-                  : '動画処理中...'}{' '}
-                {progressMessage}
-              </Box>
-            </Box>
-          ),
-        });
-
-        // 次のポーリングをスケジュール
-        console.log('Scheduling next status check in 3 seconds');
-        setTimeout(() => pollVideoStatus(videoId, toastId), 3000);
-      }
-    } catch (error) {
-      console.error('Status check error:', error);
-
-      // エラーが発生しても継続してポーリング
-      console.log('Continuing polling despite error');
-      setTimeout(() => pollVideoStatus(videoId, toastId), 5000); // エラー時は少し長めの間隔
-    }
-  };
 
   const handleUpload = async (formData: FormData) => {
     console.log('Starting upload process');
@@ -175,28 +96,17 @@ export default function UploadPage() {
       // プログレストーストを閉じる
       toast.close(toastId);
 
-      // アップロード完了後、処理状態のポーリングを開始
-      console.log('Starting video processing status polling');
-      const processingToastId = toast({
-        position: 'bottom',
-        duration: null,
-        render: () => (
-          <Box bg="white" p={3} rounded="md" shadow="lg">
-            <Progress
-              value={0}
-              size="sm"
-              colorScheme="blue"
-              rounded="md"
-              isAnimated
-            />
-            <Box mt={2} color="gray.600">
-              動画処理中... 準備中...
-            </Box>
-          </Box>
-        ),
+      // アップロード完了のトーストを表示
+      toast({
+        title: 'アップロード完了',
+        description: '動画のアップロードが完了しました',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
       });
 
-      pollVideoStatus(video.id, processingToastId);
+      // 動画一覧ページにリダイレクト
+      router.push('/videos');
     } catch (error) {
       // プログレストーストを閉じる
       toast.close(toastId);
