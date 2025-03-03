@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardLayout } from '@/components/templates/DashboardLayout';
+import { useVideos } from '@/hooks/useVideos';
+import { VideoCardProps } from '@/components/molecules/VideoCard';
+import { ApiVideo } from '@/types/video';
 
-// モックデータ
+// モックデータ（統計情報）
 const MOCK_STATS = [
   {
     label: '総視聴回数',
@@ -30,32 +33,26 @@ const MOCK_STATS = [
   },
 ];
 
-const MOCK_RECENT_VIDEOS = Array.from({ length: 4 }, (_, i) => ({
-  id: `recent-${i + 1}`,
-  title: `最近の動画 ${i + 1}`,
-  thumbnailUrl: `https://picsum.photos/seed/recent-${i + 1}/400/225`,
-  duration: Math.floor(Math.random() * 1800) + 300, // 5分〜35分
-  uploadDate: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(), // 最近の日付
-  viewCount: Math.floor(Math.random() * 1000),
-  channelName: 'マイチャンネル',
-  description: `これは最近の動画 ${i + 1} の説明です。`,
-}));
-
-const MOCK_POPULAR_VIDEOS = Array.from({ length: 4 }, (_, i) => ({
-  id: `popular-${i + 1}`,
-  title: `人気の動画 ${i + 1}`,
-  thumbnailUrl: `https://picsum.photos/seed/popular-${i + 1}/400/225`,
-  duration: Math.floor(Math.random() * 1800) + 300, // 5分〜35分
-  uploadDate: new Date(
-    Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
-  ).toISOString(),
-  viewCount: Math.floor(Math.random() * 5000) + 5000, // 高い視聴回数
-  channelName: 'マイチャンネル',
-  description: `これは人気の動画 ${i + 1} の説明です。`,
-}));
+// APIから返される動画データをVideoCardコンポーネント用に変換する関数
+function convertApiVideoToCardProps(video: ApiVideo): VideoCardProps {
+  return {
+    id: video.id,
+    title: video.title,
+    description: video.description || '',
+    // サムネイルURLはサーバーサイドで生成されたものを使用（存在する場合）
+    // 存在しない場合は動画のURLを使用
+    thumbnailUrl: video.thumbnail_url || video.file_url,
+    // 動画の長さ（秒）
+    duration: video.duration || 0,
+    // アップロード日
+    uploadDate: video.created_at,
+    // カテゴリ（タグの最初の要素を使用）
+    category: video.tags && video.tags.length > 0 ? video.tags[0] : undefined,
+  };
+}
 
 export default function DashboardPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const { data, error, isLoading } = useVideos();
   const router = useRouter();
 
   // 動画カードクリック時の処理
@@ -63,13 +60,35 @@ export default function DashboardPage() {
     router.push(`/video/${videoId}`);
   };
 
+  // 実際のデータが取得できた場合は、それを使用する
+  let recentVideos: VideoCardProps[] = [];
+  let popularVideos: VideoCardProps[] = [];
+
+  if (data && data.length > 0) {
+    // APIから返されたデータを変換
+    const videoCards = data.map((video) =>
+      convertApiVideoToCardProps(video as unknown as ApiVideo)
+    );
+
+    // 最近の動画（作成日時でソート）
+    recentVideos = [...videoCards]
+      .sort(
+        (a, b) =>
+          new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()
+      )
+      .slice(0, 4);
+
+    // 人気の動画（ランダムに選択 - 実際のアプリでは視聴回数などでソートする）
+    popularVideos = [...videoCards].sort(() => Math.random() - 0.5).slice(0, 4);
+  }
+
   // 動画にクリックハンドラを追加
-  const recentVideosWithClickHandler = MOCK_RECENT_VIDEOS.map((video) => ({
+  const recentVideosWithClickHandler = recentVideos.map((video) => ({
     ...video,
     onClick: () => handleVideoClick(video.id),
   }));
 
-  const popularVideosWithClickHandler = MOCK_POPULAR_VIDEOS.map((video) => ({
+  const popularVideosWithClickHandler = popularVideos.map((video) => ({
     ...video,
     onClick: () => handleVideoClick(video.id),
   }));
