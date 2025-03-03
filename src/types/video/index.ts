@@ -29,6 +29,8 @@ export interface ApiVideo {
   summary?: string;
   key_points?: KeyPoint[];
   questions?: Question[];
+  thumbnail_path?: string;
+  thumbnail_url?: string;
 }
 
 export interface TranscriptItem {
