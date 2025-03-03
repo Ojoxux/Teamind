@@ -1,6 +1,14 @@
 'use client';
 
-import { Box, Image, VStack, HStack, AspectRatio } from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+import {
+  Box,
+  Image,
+  VStack,
+  HStack,
+  AspectRatio,
+  Skeleton,
+} from '@chakra-ui/react';
 import { Heading } from '@/components/atoms/Heading';
 import { Text } from '@/components/atoms/Text';
 import { Badge } from '@/components/atoms/Badge';
@@ -25,12 +33,35 @@ export const VideoCard = ({
   uploadDate,
   category,
 }: VideoCardProps) => {
+  const [loading, setLoading] = useState(true);
+
   // 動画の長さをフォーマット（秒 → MM:SS）
   const formatDuration = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
+
+  // コンポーネントがマウントされたら、ローディング状態を解除
+  useEffect(() => {
+    // サムネイルURLがない場合は、ローディング状態を解除
+    if (!thumbnailUrl) {
+      setLoading(false);
+      return;
+    }
+
+    // サムネイルが画像URLの場合（.jpg, .png, .webp, .gifなど）
+    const isImageUrl = /\.(jpe?g|png|webp|gif|bmp)(\?.*)?$/i.test(thumbnailUrl);
+
+    // 画像URLの場合は、Image コンポーネントの onLoad イベントで処理するため、
+    // ここではローディング状態を維持
+    if (isImageUrl) {
+      return;
+    }
+
+    // 画像URLでない場合（動画URLなど）は、ローディング状態を解除
+    setLoading(false);
+  }, [thumbnailUrl]);
 
   return (
     <Box
@@ -47,7 +78,18 @@ export const VideoCard = ({
     >
       <Box position="relative">
         <AspectRatio ratio={16 / 9}>
-          <Image src={thumbnailUrl} alt={title} objectFit="cover" />
+          {loading ? (
+            <Skeleton height="100%" width="100%" />
+          ) : (
+            <Image
+              src={thumbnailUrl}
+              alt={title}
+              objectFit="cover"
+              onLoad={() => setLoading(false)}
+              onError={() => setLoading(false)}
+              fallback={<Skeleton height="100%" width="100%" />}
+            />
+          )}
         </AspectRatio>
         <Box
           position="absolute"
