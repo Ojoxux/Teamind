@@ -1,0 +1,38 @@
+# Supabase設定ファイル
+# このファイルはSupabase CLIによって使用されます
+
+[api]
+# API設定
+port = 54321
+schemas = ["public", "storage", "auth"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+# データベース設定
+port = 54322
+major_version = 15
+
+[studio]
+# Studioの設定
+port = 54323
+
+[inbucket]
+# メールテスト用の設定
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+# ストレージ設定
+file_size_limit = "50MiB"
+
+[auth]
+# 認証設定
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://localhost:3000"]
+jwt_expiry = 3600
+enable_signup = true
+
+[functions]
+# Edge Functions設定
