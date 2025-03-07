@@ -2,7 +2,5 @@
 .branches
 .temp
 
-# dotenvx
-.env.keys
-.env.local
-.env.*.local
+# env files (can opt-in for committing if needed)
+.env*
