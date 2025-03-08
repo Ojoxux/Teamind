@@ -1,6 +1,14 @@
 'use client';
 
-import { Box, Image, VStack, HStack, AspectRatio } from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+import {
+  Box,
+  Image,
+  VStack,
+  HStack,
+  AspectRatio,
+  Skeleton,
+} from '@chakra-ui/react';
 import { Heading } from '@/components/atoms/Heading';
 import { Text } from '@/components/atoms/Text';
 import { Badge } from '@/components/atoms/Badge';
@@ -16,6 +24,8 @@ export interface VideoCardProps {
   category?: string;
 }
 
+const PLACEHOLDER_IMAGE = '/images/video-thumbnail-placeholder.jpg';
+
 export const VideoCard = ({
   id,
   title,
@@ -25,12 +35,36 @@ export const VideoCard = ({
   uploadDate,
   category,
 }: VideoCardProps) => {
+  const [loading, setLoading] = useState(true);
+  const [imgSrc, setImgSrc] = useState(thumbnailUrl || PLACEHOLDER_IMAGE);
+
   // 動画の長さをフォーマット（秒 → MM:SS）
   const formatDuration = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
+
+  useEffect(() => {
+    if (!thumbnailUrl) {
+      console.log('サムネイルURLがありません');
+      setImgSrc(PLACEHOLDER_IMAGE);
+      setLoading(false);
+      return;
+    }
+
+    console.log('サムネイルURL:', thumbnailUrl);
+
+    const isImageUrl = /\.(jpe?g|png|webp|gif|bmp)(\?.*)?$/i.test(thumbnailUrl);
+    console.log('画像URLか:', isImageUrl);
+
+    if (!isImageUrl) {
+      console.log('画像URLではないため、プレースホルダーを使用します');
+      setImgSrc(PLACEHOLDER_IMAGE);
+    }
+
+    setLoading(false);
+  }, [thumbnailUrl]);
 
   return (
     <Box
@@ -47,7 +81,29 @@ export const VideoCard = ({
     >
       <Box position="relative">
         <AspectRatio ratio={16 / 9}>
-          <Image src={thumbnailUrl} alt={title} objectFit="cover" />
+          {loading ? (
+            <Skeleton height="100%" width="100%" />
+          ) : (
+            <Image
+              src={imgSrc}
+              alt={title}
+              objectFit="cover"
+              onLoad={() => {
+                console.log('サムネイル画像の読み込みが完了しました:', imgSrc);
+                setLoading(false);
+              }}
+              onError={(e) => {
+                console.error(
+                  'サムネイル画像の読み込みに失敗しました:',
+                  imgSrc
+                );
+                if (imgSrc !== PLACEHOLDER_IMAGE) {
+                  setImgSrc(PLACEHOLDER_IMAGE);
+                }
+              }}
+              fallback={<Skeleton />}
+            />
+          )}
         </AspectRatio>
         <Box
           position="absolute"

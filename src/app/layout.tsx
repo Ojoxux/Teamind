@@ -2,6 +2,8 @@
 
 import { ChakraProvider, Box } from '@chakra-ui/react';
 import { theme } from '@/theme';
+import ErrorBoundary from '@/utils/ErrorBoundary';
+import { QueryProvider } from '@/providers/QueryProvider';
 
 export default function RootLayout({
   children,
@@ -11,7 +13,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
-        <title>動画文字起こし・要約アプリ</title>
+        <title>Teamind</title>
         <meta
           name="description"
           content="動画の文字起こしと要約を自動生成するアプリケーション"
@@ -23,9 +25,13 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <ChakraProvider theme={theme}>
-          <Box minH="100vh">{children}</Box>
-        </ChakraProvider>
+        <QueryProvider>
+          <ErrorBoundary>
+            <ChakraProvider theme={theme}>
+              <Box minH="100vh">{children}</Box>
+            </ChakraProvider>
+          </ErrorBoundary>
+        </QueryProvider>
       </body>
     </html>
   );
