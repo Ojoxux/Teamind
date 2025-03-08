@@ -1,0 +1,6 @@
+# Supabase
+.branches
+.temp
+
+# env files (can opt-in for committing if needed)
+.env*
