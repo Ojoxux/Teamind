@@ -24,6 +24,8 @@ export interface VideoCardProps {
   category?: string;
 }
 
+const PLACEHOLDER_IMAGE = '/images/video-thumbnail-placeholder.jpg';
+
 export const VideoCard = ({
   id,
   title,
@@ -34,6 +36,7 @@ export const VideoCard = ({
   category,
 }: VideoCardProps) => {
   const [loading, setLoading] = useState(true);
+  const [imgSrc, setImgSrc] = useState(thumbnailUrl || PLACEHOLDER_IMAGE);
 
   // 動画の長さをフォーマット（秒 → MM:SS）
   const formatDuration = (seconds: number) => {
@@ -42,24 +45,24 @@ export const VideoCard = ({
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  // コンポーネントがマウントされたら、ローディング状態を解除
   useEffect(() => {
-    // サムネイルURLがない場合は、ローディング状態を解除
     if (!thumbnailUrl) {
+      console.log('サムネイルURLがありません');
+      setImgSrc(PLACEHOLDER_IMAGE);
       setLoading(false);
       return;
     }
 
-    // サムネイルが画像URLの場合（.jpg, .png, .webp, .gifなど）
-    const isImageUrl = /\.(jpe?g|png|webp|gif|bmp)(\?.*)?$/i.test(thumbnailUrl);
+    console.log('サムネイルURL:', thumbnailUrl);
 
-    // 画像URLの場合は、Image コンポーネントの onLoad イベントで処理するため、
-    // ここではローディング状態を維持
-    if (isImageUrl) {
-      return;
+    const isImageUrl = /\.(jpe?g|png|webp|gif|bmp)(\?.*)?$/i.test(thumbnailUrl);
+    console.log('画像URLか:', isImageUrl);
+
+    if (!isImageUrl) {
+      console.log('画像URLではないため、プレースホルダーを使用します');
+      setImgSrc(PLACEHOLDER_IMAGE);
     }
 
-    // 画像URLでない場合（動画URLなど）は、ローディング状態を解除
     setLoading(false);
   }, [thumbnailUrl]);
 
@@ -82,12 +85,23 @@ export const VideoCard = ({
             <Skeleton height="100%" width="100%" />
           ) : (
             <Image
-              src={thumbnailUrl}
+              src={imgSrc}
               alt={title}
               objectFit="cover"
-              onLoad={() => setLoading(false)}
-              onError={() => setLoading(false)}
-              fallback={<Skeleton height="100%" width="100%" />}
+              onLoad={() => {
+                console.log('サムネイル画像の読み込みが完了しました:', imgSrc);
+                setLoading(false);
+              }}
+              onError={(e) => {
+                console.error(
+                  'サムネイル画像の読み込みに失敗しました:',
+                  imgSrc
+                );
+                if (imgSrc !== PLACEHOLDER_IMAGE) {
+                  setImgSrc(PLACEHOLDER_IMAGE);
+                }
+              }}
+              fallback={<Skeleton />}
             />
           )}
         </AspectRatio>
