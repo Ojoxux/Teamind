@@ -31,6 +31,7 @@ import {
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import NextLink from 'next/link';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { translateAuthError, checkPasswordStrength } from '@/utils/authErrors';
 
 // LoginFormコンポーネントとして分離
 function LoginForm() {
@@ -57,10 +58,13 @@ function LoginForm() {
       );
       if (error) throw error;
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : '不明なエラーが発生しました';
+      const translatedError = translateAuthError(errorMessage);
+
       toast({
         title: 'ログインエラー',
-        description:
-          error instanceof Error ? error.message : '不明なエラーが発生しました',
+        description: translatedError,
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -69,6 +73,8 @@ function LoginForm() {
       setIsLoading(false);
     }
   };
+
+  // 共通のユーティリティ関数を使用
 
   const handleEmailLogin = async () => {
     if (!email || !password) {
@@ -101,10 +107,13 @@ function LoginForm() {
         router.push('/videos');
       }, 500);
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : '不明なエラーが発生しました';
+      const translatedError = translateAuthError(errorMessage);
+
       toast({
         title: 'ログインエラー',
-        description:
-          error instanceof Error ? error.message : '不明なエラーが発生しました',
+        description: translatedError,
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -126,12 +135,17 @@ function LoginForm() {
       return;
     }
 
-    if (password.length < 6) {
+    // パスワードの強度をチェック（共通ユーティリティ関数を使用）
+    const passwordStrengthErrors = checkPasswordStrength(password);
+
+    if (passwordStrengthErrors.length > 0) {
       toast({
-        title: '入力エラー',
-        description: 'パスワードは6文字以上で入力してください',
+        title: 'パスワードが弱すぎます',
+        description: `パスワードは次の条件を満たす必要があります: ${passwordStrengthErrors.join(
+          '、'
+        )}`,
         status: 'error',
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
       return;
@@ -151,10 +165,13 @@ function LoginForm() {
         isClosable: true,
       });
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : '不明なエラーが発生しました';
+      const translatedError = translateAuthError(errorMessage);
+
       toast({
         title: '登録エラー',
-        description:
-          error instanceof Error ? error.message : '不明なエラーが発生しました',
+        description: translatedError,
         status: 'error',
         duration: 5000,
         isClosable: true,
