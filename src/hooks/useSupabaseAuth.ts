@@ -8,6 +8,8 @@ export function useSupabaseAuth() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     // 現在のセッションを取得
     const getCurrentSession = async () => {
       try {
@@ -15,18 +17,24 @@ export function useSupabaseAuth() {
 
         if (error) {
           console.error('セッション取得エラー:', error);
-          setUser(null);
-          setSession(null);
-        } else {
+          if (mounted) {
+            setUser(null);
+            setSession(null);
+          }
+        } else if (mounted) {
           setSession(data.session);
           setUser(data.session?.user || null);
         }
       } catch (err) {
         console.error('セッション取得中の例外:', err);
-        setUser(null);
-        setSession(null);
+        if (mounted) {
+          setUser(null);
+          setSession(null);
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -36,13 +44,16 @@ export function useSupabaseAuth() {
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       async (event, newSession) => {
         console.log('認証状態変更:', event);
-        setSession(newSession);
-        setUser(newSession?.user || null);
-        setIsLoading(false);
+        if (mounted) {
+          setSession(newSession);
+          setUser(newSession?.user || null);
+          setIsLoading(false);
+        }
       }
     );
 
     return () => {
+      mounted = false;
       authListener.subscription.unsubscribe();
     };
   }, []);
@@ -82,7 +93,15 @@ export function useSupabaseAuth() {
 
   // ログアウト
   const signOut = async () => {
-    return supabaseClient.auth.signOut();
+    setIsLoading(true);
+    try {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) throw error;
+      setUser(null);
+      setSession(null);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // 認証トークンの取得 - エラーハンドリングを強化
