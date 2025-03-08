@@ -13,8 +13,11 @@ export async function GET(request: NextRequest) {
 
     // セッションの交換
     await supabase.auth.exchangeCodeForSession(code);
+
+    // 認証成功後はダッシュボードにリダイレクト
+    return NextResponse.redirect(new URL('/videos', request.url));
   }
 
-  // 確認完了後にリダイレクト
-  return NextResponse.redirect(new URL('/login?verified=true', request.url));
+  // codeがない場合はログインページにリダイレクト
+  return NextResponse.redirect(new URL('/login', request.url));
 }
