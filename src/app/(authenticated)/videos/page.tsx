@@ -8,11 +8,16 @@ import {
   Button,
   Center,
   Spinner,
+  Flex,
+  Heading,
+  IconButton,
+  Tooltip,
 } from '@chakra-ui/react';
 import { VideoGrid } from '@/components/organisms/VideoGrid';
-import { useVideos } from '@/hooks/useVideos';
+import { useVideos, useRefreshVideos } from '@/hooks/useVideos';
 import { VideoCardProps } from '@/components/molecules/VideoCard';
 import { ApiVideo } from '@/types/video';
+import { RepeatIcon } from '@chakra-ui/icons';
 
 // APIから返される動画データをVideoCardコンポーネント用に変換する関数
 function convertApiVideoToCardProps(video: ApiVideo): VideoCardProps {
@@ -22,7 +27,7 @@ function convertApiVideoToCardProps(video: ApiVideo): VideoCardProps {
     description: video.description || '',
     // サムネイルURLはサーバーサイドで生成されたものを使用（存在する場合）
     // 存在しない場合は動画のURLを使用
-    thumbnailUrl: video.thumbnail_url || video.file_url,
+    thumbnailUrl: video.thumbnail_url || '',
     // 動画の長さ（秒）
     duration: video.duration || 0,
     // アップロード日
@@ -34,6 +39,7 @@ function convertApiVideoToCardProps(video: ApiVideo): VideoCardProps {
 
 function VideoList() {
   const { data, error, isLoading } = useVideos();
+  const refreshVideos = useRefreshVideos();
 
   if (error) {
     return (
@@ -51,7 +57,29 @@ function VideoList() {
       )
     : [];
 
-  return <VideoGrid videos={videoCards} isLoading={isLoading} />;
+  const handleRefresh = async () => {
+    console.log('動画一覧を手動で更新します');
+    await refreshVideos();
+  };
+
+  return (
+    <Box>
+      <Flex justifyContent="space-between" alignItems="center" mb={4}>
+        <Heading size="lg">動画一覧</Heading>
+        <Tooltip label="動画一覧を更新">
+          <IconButton
+            aria-label="動画一覧を更新"
+            icon={<RepeatIcon />}
+            onClick={handleRefresh}
+            isLoading={isLoading}
+            colorScheme="blue"
+            variant="ghost"
+          />
+        </Tooltip>
+      </Flex>
+      <VideoGrid videos={videoCards} isLoading={isLoading} />
+    </Box>
+  );
 }
 
 export default function VideosPage() {
