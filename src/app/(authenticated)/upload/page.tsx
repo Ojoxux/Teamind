@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast, Progress, Box } from '@chakra-ui/react';
 import { UploadForm } from '@/components/organisms/UploadForm';
-import { uploadVideo, generateThumbnail } from '@/lib/api/videos';
+import { uploadVideo } from '@/lib/api/videos';
+import { generateThumbnail } from '@/lib/api/thumbnails';
 import { useRefreshVideos } from '@/hooks/useVideos';
 
 export default function UploadPage() {
@@ -104,11 +105,21 @@ export default function UploadPage() {
         });
 
         try {
+          // バックエンドAPIを使用してサムネイル生成
+          console.log('バックエンドAPIを使用してサムネイル生成を開始します');
           const thumbnailResult = await generateThumbnail(
             video.id,
             video.file_path
           );
           console.log('サムネイル生成成功:', thumbnailResult);
+
+          toast({
+            title: '成功',
+            description: 'サムネイルを生成しました',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          });
         } catch (error) {
           console.error('サムネイル生成エラー:', error);
           toast({
