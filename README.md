@@ -112,9 +112,9 @@ NEXT_PUBLIC_API_URL=your_api_url
 
 ### ブランチ命名規則
 
-- 小文字とハイフンを使用（例: `feat/#00_add-search-function`）
-- 機能やタスクを簡潔に表現する名前を使用
-- Issue と関連付ける場合は、Issue 番号を含める（例: `feature/#42_add-login-function`）
+- 小文字とハイフンを使用（例: `feature/#xx_add-search-function`）
+- 機能やタスクを簡潔に表現する文章をケバブケースで記述
+- Issue と関連付ける場合は、Issue 番号を含める（例: `feature/#[Issue番号]_hoge-hoge`）
 
 ### コミットメッセージのルール
 
