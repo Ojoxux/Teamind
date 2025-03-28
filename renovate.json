@@ -2,7 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:base"],
   "timezone": "Asia/Tokyo",
-  "schedule": ["every day"],
+  "schedule": ["at any time"],
   "packageRules": [
     {
       "matchPackagePatterns": ["^@chakra-ui/"],
@@ -35,7 +35,7 @@
       "matchPackagePatterns": ["^@types/"],
       "groupName": "dev tools",
       "labels": ["dev-dependencies"],
-      "schedule": ["after 10pm every weekday"]
+      "schedule": ["after 22:00 every weekday"]
     },
     {
       "matchDepTypes": ["dependencies"],
@@ -43,6 +43,7 @@
       "automerge": true
     },
     {
+      "matchUpdateTypes": ["patch", "minor", "major"],
       "matchSecurityUpdates": true,
       "prPriority": 1,
       "labels": ["security"]
