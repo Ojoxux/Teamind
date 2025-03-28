@@ -1,53 +1,97 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": [
+    "config:recommended"
+  ],
   "timezone": "Asia/Tokyo",
-  "schedule": ["at any time"],
+  "schedule": [
+    "at any time"
+  ],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^@chakra-ui/"],
       "groupName": "chakra-ui packages",
-      "labels": ["chakra-ui"]
+      "labels": [
+        "chakra-ui"
+      ],
+      "matchPackageNames": [
+        "/^@chakra-ui//"
+      ]
     },
     {
-      "matchPackagePatterns": ["^react", "^@types/react"],
       "groupName": "react packages",
-      "labels": ["react"]
+      "labels": [
+        "react"
+      ],
+      "matchPackageNames": [
+        "/^react/",
+        "/^@types/react/"
+      ]
     },
     {
-      "matchPackagePatterns": ["^next"],
       "groupName": "next.js packages",
-      "labels": ["next.js"]
+      "labels": [
+        "next.js"
+      ],
+      "matchPackageNames": [
+        "/^next/"
+      ]
     },
     {
-      "matchPackagePatterns": ["^@supabase/"],
       "groupName": "supabase packages",
-      "labels": ["supabase"]
+      "labels": [
+        "supabase"
+      ],
+      "matchPackageNames": [
+        "/^@supabase//"
+      ]
     },
     {
-      "matchPackagePatterns": ["^@tanstack/"],
       "groupName": "tanstack packages",
-      "labels": ["tanstack"]
+      "labels": [
+        "tanstack"
+      ],
+      "matchPackageNames": [
+        "/^@tanstack//"
+      ]
     },
     {
-      "matchPackagePatterns": ["^@types/", "^eslint", "typescript"],
       "groupName": "dev tools",
-      "labels": ["dev-dependencies"]
+      "labels": [
+        "dev-dependencies"
+      ],
+      "matchPackageNames": [
+        "/^@types//",
+        "/^eslint/",
+        "/typescript/"
+      ]
     },
     {
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true,
-      "stabilityDays": 3
+      "minimumReleaseAge": "3 days",
+      "matchPackageNames": [
+        "*"
+      ]
     },
     {
-      "matchUpdateTypes": ["major"],
-      "labels": ["major-update"],
-      "stabilityDays": 7
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "labels": [
+        "major-update"
+      ],
+      "minimumReleaseAge": "7 days"
     }
   ],
-  "ignoreDeps": ["@supabase/auth-helpers-nextjs"],
-  "labels": ["dependencies"],
+  "ignoreDeps": [
+    "@supabase/auth-helpers-nextjs"
+  ],
+  "labels": [
+    "dependencies"
+  ],
   "prConcurrentLimit": 10,
   "prHourlyLimit": 4,
   "separateMajorMinor": true,
