@@ -3,6 +3,10 @@
   "extends": ["config:base"],
   "timezone": "Asia/Tokyo",
   "schedule": ["at any time"],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "prPriority": 1
+  },
   "packageRules": [
     {
       "matchPackagePatterns": ["^@chakra-ui/"],
@@ -41,12 +45,6 @@
       "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
-    },
-    {
-      "matchUpdateTypes": ["patch", "minor", "major"],
-      "matchVulnerabilityAlerts": true,
-      "prPriority": 1,
-      "labels": ["security"]
     }
   ],
   "labels": ["dependencies"],
