@@ -44,7 +44,7 @@
     },
     {
       "matchUpdateTypes": ["patch", "minor", "major"],
-      "matchSecurityUpdates": true,
+      "matchVulnerabilityAlerts": true,
       "prPriority": 1,
       "labels": ["security"]
     }
