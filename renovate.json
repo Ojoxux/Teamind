@@ -1,0 +1,55 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base"],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["every day"],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["^@chakra-ui/"],
+      "groupName": "chakra-ui packages",
+      "labels": ["chakra-ui"],
+      "automerge": true
+    },
+    {
+      "matchPackagePatterns": ["^react", "^@types/react"],
+      "groupName": "react packages",
+      "labels": ["react"]
+    },
+    {
+      "matchPackagePatterns": ["^next", "eslint-config-next"],
+      "groupName": "next.js packages",
+      "labels": ["next.js"]
+    },
+    {
+      "matchPackagePatterns": ["^@supabase/"],
+      "groupName": "supabase packages",
+      "labels": ["supabase"]
+    },
+    {
+      "matchPackagePatterns": ["^@tanstack/"],
+      "groupName": "tanstack packages",
+      "labels": ["tanstack"]
+    },
+    {
+      "matchPackageNames": ["@biomejs/biome", "typescript", "eslint"],
+      "matchPackagePatterns": ["^@types/"],
+      "groupName": "dev tools",
+      "labels": ["dev-dependencies"],
+      "schedule": ["after 10pm every weekday"]
+    },
+    {
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "matchSecurityUpdates": true,
+      "prPriority": 1,
+      "labels": ["security"]
+    }
+  ],
+  "labels": ["dependencies"],
+  "stabilityDays": 3,
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2
+}
