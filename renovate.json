@@ -3,16 +3,11 @@
   "extends": ["config:base"],
   "timezone": "Asia/Tokyo",
   "schedule": ["at any time"],
-  "vulnerabilityAlerts": {
-    "labels": ["security"],
-    "prPriority": 1
-  },
   "packageRules": [
     {
       "matchPackagePatterns": ["^@chakra-ui/"],
       "groupName": "chakra-ui packages",
-      "labels": ["chakra-ui"],
-      "automerge": true
+      "labels": ["chakra-ui"]
     },
     {
       "matchPackagePatterns": ["^react", "^@types/react"],
@@ -20,7 +15,7 @@
       "labels": ["react"]
     },
     {
-      "matchPackagePatterns": ["^next", "eslint-config-next"],
+      "matchPackagePatterns": ["^next"],
       "groupName": "next.js packages",
       "labels": ["next.js"]
     },
@@ -35,20 +30,28 @@
       "labels": ["tanstack"]
     },
     {
-      "matchPackageNames": ["@biomejs/biome", "typescript", "eslint"],
-      "matchPackagePatterns": ["^@types/"],
+      "matchPackagePatterns": ["^@types/", "^eslint", "typescript"],
       "groupName": "dev tools",
-      "labels": ["dev-dependencies"],
-      "schedule": ["after 22:00 every weekday"]
+      "labels": ["dev-dependencies"]
     },
     {
-      "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
+      "matchPackagePatterns": ["*"],
+      "automerge": true,
+      "stabilityDays": 3
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "labels": ["major-update"],
+      "stabilityDays": 7
     }
   ],
+  "ignoreDeps": ["@supabase/auth-helpers-nextjs"],
   "labels": ["dependencies"],
-  "stabilityDays": 3,
-  "prConcurrentLimit": 5,
-  "prHourlyLimit": 2
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 4,
+  "separateMajorMinor": true,
+  "separateMultipleMajor": true,
+  "rangeStrategy": "pin",
+  "dependencyDashboard": true
 }
