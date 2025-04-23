@@ -48,12 +48,12 @@ Teamind は、Microsoft Teams などのオンライン会議ツールで録画�
 
 ## 技術スタック
 
-- **フロントエンド**: Next.js 14(App Router), TypeScript 5.x, Chakra UI
-- **バックエンド**: [未定]
+- **フロントエンド**: Next.js 15.3.1(App Router), TypeScript 5.8.3, Chakra UI 2.10.7
+- **バックエンド/API**: Supabase
 - **AI/ML**: Whisper API, Anthropic API
 - **データベース**: Supabase
 - **ホスティング**: Vercel
-- **コード品質**: Biome
+- **コード品質**: Biome 1.9.4
 
 ## 開発環境のセットアップ
 
@@ -91,11 +91,34 @@ Teamind は、Microsoft Teams などのオンライン会議ツールで録画�
 
 ## 環境変数
 
-`.env.local`ファイルを作成し、以下の環境変数を設定してください：
+### アプリケーションルート（.env）
+
+アプリケーションのルートディレクトリに`.env`ファイルを作成し、以下の環境変数を設定してください：
 
 ```
-NEXT_PUBLIC_API_URL=your_api_url
-# その他の必要な環境変数
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL="your_supabase_url"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your_supabase_anon_key"
+SUPABASE_SERVICE_ROLE_KEY="your_supabase_service_role_key"
+
+# AI/ML Services
+OPENAI_API_KEY="your_openai_api_key"
+ANTHROPIC_API_KEY="your_anthropic_api_key"
+```
+
+### エッジファンクション（/supabase/.env）
+
+エッジファンクション用の環境変数は`/supabase`ディレクトリに`.env`ファイルを作成し、以下の環境変数を設定してください：
+
+```
+# Supabase (Edge Functions)
+TEAMIND_SUPABASE_PROJECT_REF="your_supabase_project_ref"
+TEAMIND_SUPABASE_URL="your_supabase_url"
+TEAMIND_SUPABASE_ANON_KEY="your_supabase_anon_key"
+TEAMIND_SUPABASE_SERVICE_ROLE_KEY="your_supabase_service_role_key"
+
+# Cloudinary
+CLOUDINARY_URL="cloudinary://your_api_key:your_api_secret@your_cloud_name"
 ```
 
 ## 開発ワークフロー
@@ -112,7 +135,7 @@ NEXT_PUBLIC_API_URL=your_api_url
 
 ### ブランチ命名規則
 
-- 小文字とハイフンを使用（例: `feature/#xx_add-search-function`）
+- 小文字、ハイフン、アンダースコアを使用（例: `feature/#xx_add-search-function`）
 - 機能やタスクを簡潔に表現する文章をケバブケースで記述
 - Issue と関連付ける場合は、Issue 番号を含める（例: `feature/#[Issue番号]_hoge-hoge`）
 
