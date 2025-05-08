@@ -13,7 +13,7 @@
   "dependencies": {
     "@chakra-ui/icons": "2.2.4",
     "@chakra-ui/next-js": "2.4.2",
-    "@chakra-ui/react": "3.16.1",
+    "@chakra-ui/react": "2.8.2",
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
@@ -37,6 +37,6 @@
     "eslint": "9.26.0",
     "eslint-config-next": "15.3.1",
     "ignore-loader": "0.1.2",
-    "typescript": "5.8.3"
+    "typescript": "5.7.3"
   }
 }
