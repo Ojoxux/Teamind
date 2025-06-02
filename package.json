@@ -31,11 +31,11 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@eslint/eslintrc": "3.3.1",
-    "@types/node": "22.15.24",
+    "@types/node": "22.15.26",
     "@types/react": "19.1.6",
     "@types/react-dom": "19.1.5",
     "eslint": "9.27.0",
-    "eslint-config-next": "15.3.2",
+    "eslint-config-next": "15.3.3",
     "ignore-loader": "0.1.2",
     "typescript": "5.8.3"
   }
