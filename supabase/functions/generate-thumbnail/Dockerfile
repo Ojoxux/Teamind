@@ -1,4 +1,4 @@
-FROM denoland/deno:2.3.3
+FROM denoland/deno:2.3.5
 
 # FFmpegのインストール
 RUN apt-get update && apt-get install -y ffmpeg
