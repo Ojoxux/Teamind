@@ -20,7 +20,7 @@
     "@supabase/supabase-js": "2.50.0",
     "@tanstack/react-query": "5.80.7",
     "@tanstack/react-query-devtools": "5.80.7",
-    "framer-motion": "12.17.0",
+    "framer-motion": "12.17.3",
     "jotai": "2.12.3",
     "next": "15.3.1",
     "next-themes": "0.4.6",
