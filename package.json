@@ -22,7 +22,7 @@
     "@tanstack/react-query-devtools": "5.83.0",
     "framer-motion": "12.23.6",
     "jotai": "2.12.5",
-    "next": "15.4.2",
+    "next": "15.4.3",
     "next-themes": "0.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
