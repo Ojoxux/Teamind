@@ -29,7 +29,7 @@
     "react-icons": "5.7.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.2",
+    "@biomejs/biome": "2.6.3",
     "@eslint/eslintrc": "3.3.7",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
